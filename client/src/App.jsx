@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 
 const App = () => {
-  const [owners, setOwners] = useState([]);
+  const [questions, setQuestions] = useState([]);
   const [sort, setSort] = useState("asc");
 
   useEffect(() => {
-    fetch(`http://localhost:3000/owners?sort=${sort}`)
+    fetch(`http://localhost:3000/questions?sort=${sort}`)
       .then((resp) => resp.json())
       .then((response) => {
-        setOwners(response);
+        setQuestions(response);
       });
   }, [sort]);
 
@@ -26,9 +26,9 @@ const App = () => {
       >
         descending
       </button>
-      {owners.map((owner) => (
-        <div key={owner._id}>
-          {owner.name} income: {owner.income}
+      {questions.map((post) => (
+        <div key={post._id}>
+          {post.name} date: {post.date}
         </div>
       ))}
     </div>
