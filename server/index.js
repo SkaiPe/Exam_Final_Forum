@@ -1,5 +1,4 @@
 const express = require('express');
-
 const cors = require('cors');
 const { MongoClient, ObjectId } = require('mongodb');
 
@@ -15,10 +14,24 @@ app.use(cors());
 
 const client = new MongoClient(URI);
 
-app.get('/', async (req, res) => {
+app.get('/users', async (req, res) => {
   try {
     const con = await client.connect();
-    const data = await con.db(dbName).collection('pets').find().toArray();
+    const data = await con.db(dbName).collection('users').find().toArray();
+    await con.close();
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+app.post('/questions', async (req, res) => {
+  try {
+    const { name, question } = req.body;
+    const con = await client.connect();
+    const data = await con
+      .db(dbName)
+      .collection('questions')
+      .insertOne({ name, question, userId: new ObjectId(req.body.answer) }); // new ObjectId(id)
     await con.close();
     res.send(data);
   } catch (error) {
@@ -26,34 +39,23 @@ app.get('/', async (req, res) => {
   }
 });
 
-app.post('/', async (req, res) => {
-  try {
-    const { type, name } = req.body;
-    const con = await client.connect();
-    const data = await con
-      .db(dbName)
-      .collection('pets')
-      .insertOne({ type, name, ownerId: new ObjectId(req.body.ownerId) }); // new ObjectId(id)
-    await con.close();
-    res.send(data);
-  } catch (error) {
-    res.status(500).send(error);
-  }
+app.listen(port, () => {
+  console.log(`Server is running on the ${port} port`);
 });
 
-app.get('/ownersWithPets', async (req, res) => {
+app.get('/questionWithAnswer', async (req, res) => {
   try {
     const con = await client.connect();
     const data = await con
       .db(dbName)
-      .collection('owners')
+      .collection('questions')
       .aggregate([
         {
           $lookup: {
-            from: 'pets',
+            from: 'answers',
             localField: '_id',
-            foreignField: 'ownerId',
-            as: 'pets',
+            foreignField: 'questionId',
+            as: 'answers',
           },
         },
       ])
@@ -65,19 +67,17 @@ app.get('/ownersWithPets', async (req, res) => {
   }
 });
 
-// /owners?sort=asc
-// /owners?sort=dsc
-app.get('/owners', async (req, res) => {
+app.get('/users', async (req, res) => {
   try {
-    const { sort } = req.query;
+    const { sort } = req.query();
     const sortType = sort === 'asc' ? 1 : -1;
 
     const con = await client.connect();
     const data = await con
       .db(dbName)
-      .collection('owners')
+      .collection('users')
       .find()
-      .sort({ income: sortType }) // 1 didejimo -1 mazejimo
+      .sort({ date: sortType }) // 1 didejimo -1 mazejimo
       .toArray();
     await con.close();
     res.send(data);
@@ -86,6 +86,6 @@ app.get('/owners', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on the ${port} port`);
-});
+// app.listen(port, () => {
+//   console.log(`Server is running on the ${port} port`);
+// });
