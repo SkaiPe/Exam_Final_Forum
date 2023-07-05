@@ -9,29 +9,30 @@ const URI = process.env.DB_CONNECTION_STRING;
 const dbName = process.env.DB_NAME;
 
 const app = express();
-app.use(express.json()); // aplikacija moka apdoroti JSON formatu ateinancius requestus
+app.use(express.json());
 app.use(cors());
 
 const client = new MongoClient(URI);
 
-app.get('/users', async (req, res) => {
+app.post('/users', async (req, res) => {
   try {
+    const { name, email } = req.body;
     const con = await client.connect();
-    const data = await con.db(dbName).collection('users').find().toArray();
+    const data = await con
+      .db(dbName)
+      .collection('users')
+      .insertOne({ name, email, userId: new ObjectId(req.body.userId) });
     await con.close();
     res.send(data);
   } catch (error) {
     res.status(500).send(error);
   }
 });
-app.post('/questions', async (req, res) => {
+// Klausimų sąrasšas
+app.get('/questions', async (req, res) => {
   try {
-    const { name, question } = req.body;
     const con = await client.connect();
-    const data = await con
-      .db(dbName)
-      .collection('questions')
-      .insertOne({ name, question, userId: new ObjectId(req.body.answer) }); // new ObjectId(id)
+    const data = await con.db(dbName).collection('questions').find().toArray();
     await con.close();
     res.send(data);
   } catch (error) {
