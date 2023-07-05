@@ -1,0 +1,33 @@
+.ld-container {
+    background: var(--clr-gray-100);
+    display: inline-flex;
+    padding: 0.5rem 0.75rem;
+    gap: 1.75rem;
+    border-radius: 30px;
+  }
+  
+  .ld-group {
+  
+    display: flex;
+    color: var(--clr-gray-200);
+    gap: 0.5rem;
+  }
+  
+  .count {
+    width: 10px;
+  }
+  
+  .like-icon,
+  .dislike-icon {
+    font-size: 18px;
+    font-weight: 600;
+  
+  }
+  
+  .like-icon.like-active {
+    color: var(--clr-primary);
+  }
+  
+  .dislike-icon.dislike-active {
+    color: var(--clr-red-500)
+  }
