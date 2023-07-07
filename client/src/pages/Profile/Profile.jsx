@@ -1,27 +1,24 @@
 import { useState, useContext } from "react";
-import { Link } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
-import Button from "../../components/Button/Button";
 import FormItem from "../../components/FormItem/FormItem";
-import { LOGIN_ROUTE } from "../../routes/const";
-import "../Login/Login.scss";
+import Button from "../../components/Button/Button";
+import "./Profile.scss";
 
-// DRY - dont repeat yourself, arba NEkartok kodo
-
-const Register = () => {
-  const { handleRegister } = useContext(UserContext);
-  const [name, setName] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const Profile = () => {
+  const { user, handleUpdateUser, handleLogout } = useContext(UserContext);
+  const [name, setName] = useState(user.name);
+  const [lastname, setLastname] = useState(user.lastname);
+  const [email, setEmail] = useState(user.email);
+  const [password, setPassword] = useState(user.password);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const user = { name, lastname, email, password };
-    handleRegister(user);
+    handleUpdateUser(user);
   };
+
   return (
-    <form className="form" onSubmit={handleSubmit}>
+    <form className="profile-form" onSubmit={handleSubmit}>
       <FormItem
         label="Vardas"
         containerClassname="form-item"
@@ -56,11 +53,13 @@ const Register = () => {
         required
       />
       <div className="button-container">
-        <Button>Registruokis</Button>
-        <Link to={LOGIN_ROUTE}>Grįžk prisijungti</Link>
+        <Button>Atnaujinta</Button>
+        <Button type="button" variant="outlined" onClick={handleLogout}>
+          Atsijungta
+        </Button>
       </div>
     </form>
   );
 };
 
-export default Register;
+export default Profile;

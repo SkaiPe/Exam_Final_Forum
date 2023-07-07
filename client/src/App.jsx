@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-
+import Providers from "./context/Providers";
 import Login from "./pages/Login";
 import MainPage from "./pages/MainPage";
 import Register from "./pages/Register";
@@ -9,7 +9,7 @@ import CreateQuestion from "./pages/CreateQuestion";
 
 const App = () => {
   return (
-    <>
+    <Providers>
       <Routes>
         <Route exact path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -17,7 +17,7 @@ const App = () => {
         <Route path="/myprofile" element={<MyProfile />} />
         <Route path="/question" element={<CreateQuestion />} />
       </Routes>
-    </>
+    </Providers>
   );
 };
 

@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { REGISTER_ROUTE } from "../../routes/const";
-import FormItem from "../../components/FormItem/FormItem";
-import "./Login.css";
 import { UserContext } from "../../context/UserContext";
+import FormItem from "../../components/FormItem/FormItem";
 import Button from "../../components/Button/Button";
+import { REGISTER_ROUTE } from "../../routes/const";
+import "./Login.scss";
 
 const Login = () => {
   const { handleLogin } = useContext(UserContext);
@@ -21,17 +21,16 @@ const Login = () => {
     <div className="container">
       <form className="form" onSubmit={handleSubmit}>
         <FormItem
-          label="Email"
+          label="El.paštas"
           containerClassname="form-item"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="input"
           required
         />
 
         <FormItem
-          label="Password"
+          label="Slaptažodis"
           containerClassname="form-item"
           type="password"
           value={password}
@@ -41,8 +40,8 @@ const Login = () => {
 
         {error && <p className="error">{error}</p>}
         <div className="button-container">
-          <Button>Login</Button>
-          <Link to={REGISTER_ROUTE}>Register</Link>
+          <Button>Prisijungti</Button>
+          <Link to={REGISTER_ROUTE}>Registruotis</Link>
         </div>
       </form>
     </div>
