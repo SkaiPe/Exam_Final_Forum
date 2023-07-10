@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LOGIN_ROUTE } from "../routes/const";
@@ -75,6 +76,9 @@ const UserProvider = ({ children }) => {
       {children}
     </UserContext.Provider>
   );
+};
+UserProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export { UserContext, UserProvider };
