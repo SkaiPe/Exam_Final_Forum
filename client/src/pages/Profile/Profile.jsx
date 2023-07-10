@@ -53,9 +53,9 @@ const Profile = () => {
         required
       />
       <div className="button-container">
-        <Button>Atnaujinta</Button>
+        <Button>Atnaujinti</Button>
         <Button type="button" variant="outlined" onClick={handleLogout}>
-          Atsijungta
+          Atsijungti
         </Button>
       </div>
     </form>

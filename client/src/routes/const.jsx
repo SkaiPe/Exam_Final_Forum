@@ -5,25 +5,30 @@ import Contacts from "../pages/Contacts/Contacts";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import Profile from "../pages/Profile/Profile";
-import Projects from "../pages/Projects/Projects";
-import NewProject from "../pages/NewProject/NewProject";
-import Project from "../pages/Project/Project";
-import EditProject from "../pages/EditProject/EditProject";
+import Questions from "../pages/Questions/Questions";
+import NewQuestion from "../pages/NewQuestion/NewQuestion";
+import Answer from "../pages/Answer/Answer";
+import EditQuestion from "../pages/EditQuestion/EditQuestion";
 
 export const REGISTER_ROUTE = "/register";
 export const LOGIN_ROUTE = "/";
 export const MAIN_ROUTE = "/";
 export const CONTACTS_ROUTE = "/contacts";
 export const PROFILE_ROUTE = "/profile";
-export const PROJECTS_ROUTE = "/projects";
-export const NEW_PROJECT_ROUTE = `${PROJECTS_ROUTE}/new`;
-export const PROJECT_ROUTE = `${PROJECTS_ROUTE}/:id`;
-export const EDIT_PROJECT_ROUTE = `${PROJECT_ROUTE}/edit`;
+export const QUESTIONS_ROUTE = "/questions";
+export const NEW_QUESTION_ROUTE = `${QUESTIONS_ROUTE}/new`;
+export const QUESTION_ROUTE = `${QUESTIONS_ROUTE}/:id`;
+export const EDIT_QUESTION_ROUTE = `${QUESTION_ROUTE}/edit`;
+export const ANSWER_ROUTE = `${ANSWER_ROUTE}/:id`;
 
-// kol neesu prisijnugęs
+// kol ne prisijnugta
 export const loginRoutes = {
   Layout: LoginLayout,
   routes: [
+    {
+      path: MAIN_ROUTE,
+      Component: Main,
+    },
     {
       path: LOGIN_ROUTE,
       Component: Login,
@@ -32,10 +37,14 @@ export const loginRoutes = {
       path: REGISTER_ROUTE,
       Component: Register,
     },
+    {
+      path: QUESTIONS_ROUTE,
+      Component: Questions,
+    },
   ],
 };
 
-// kai esu prisijungęs
+// kai prisijungta
 export const authenticatedRoutes = {
   Layout: AuthenticatedLayout,
   routes: [
@@ -52,26 +61,29 @@ export const authenticatedRoutes = {
       Component: Profile,
     },
     {
-      path: PROJECTS_ROUTE,
-      Component: Projects,
+      path: QUESTIONS_ROUTE,
+      Component: Questions,
     },
     {
-      path: NEW_PROJECT_ROUTE,
-      Component: NewProject,
+      path: NEW_QUESTION_ROUTE,
+      Component: NewQuestion,
     },
     {
-      path: PROJECT_ROUTE,
-      Component: Project,
+      path: QUESTIONS_ROUTE,
+      Component: Questions,
     },
     {
-      path: EDIT_PROJECT_ROUTE,
-      Component: EditProject,
+      path: EDIT_QUESTION_ROUTE,
+      Component: EditQuestion,
+    },
+    {
+      path: ANSWER_ROUTE,
+      Component: Answer,
     },
   ],
 };
 
 export const topbarNavigationItems = [
-  { route: MAIN_ROUTE, title: "Home" },
-  { route: PROJECTS_ROUTE, title: "Projects" },
-  { route: CONTACTS_ROUTE, title: "Contacts" },
+  { route: MAIN_ROUTE, title: "NAMUČIAI" },
+  { route: QUESTIONS_ROUTE, title: "DISKUSIJOS" },
 ];

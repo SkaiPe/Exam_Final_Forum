@@ -1,0 +1,23 @@
+@import "../../styles/shadows.scss";
+
+.question-container {
+  box-shadow: $cardShadow;
+  padding: 2rem;
+  border-radius: 1rem;
+
+  .project-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  
+
+  img {
+    height: 250px;
+  }
+
+  span {
+    font-weight: 600;
+  }
+}
