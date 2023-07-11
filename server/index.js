@@ -21,7 +21,7 @@ const client = new MongoClient(URI);
 
 // ištraukia duomenis (visą kolekciją vartotojų)
 
-app.get('/user', async (req, res) => {
+app.get('/users', async (req, res) => {
   try {
     const con = await client.connect();
     const data = await con.db(dbName).collection('users').find().toArray();
