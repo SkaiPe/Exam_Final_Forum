@@ -8,18 +8,14 @@ const port = process.env.PORT || 8080;
 const URI = process.env.DB_CONNECTION_STRING;
 const dbName = process.env.DB_NAME;
 
-const app = express();
-
-// kad suprastu json formatą:
-app.use(express.json());
-// kad veiktu apsas, susijungtu
-app.use(cors());
-
 const client = new MongoClient(URI);
 
-// const names = ['Skaika'];
+const app = express();
+app.use(express.json());
+app.use(cors());
 
-// 2. prisijungimas
+// Login
+
 app.post('/login', async (req, res) => {
   try {
     const user = req.body;
@@ -43,7 +39,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// ištraukia duomenis (vartotojų)
+// Get and Post Users
 
 app.get('/users', async (req, res) => {
   try {
@@ -55,8 +51,6 @@ app.get('/users', async (req, res) => {
     res.status(500).send(error);
   }
 });
-
-// prideda nauja vartotoja i duomenu baze
 
 app.post('/users', async (req, res) => {
   try {
@@ -70,9 +64,9 @@ app.post('/users', async (req, res) => {
   }
 });
 
-//  PASIEKIA KLAUSIMUS
+// Get and Post Questions/Posts
 
-app.get('/questions', async (req, res) => {
+app.get('/posts', async (req, res) => {
   try {
     const { sortDate } = req.query;
     const sortDateType = sortDate === 'asc' ? 1 : -1;
@@ -80,23 +74,23 @@ app.get('/questions', async (req, res) => {
     const con = await client.connect();
     const data = await con
       .db(dbName)
-      .collection('questions')
+      .collection('posts')
       .aggregate([
         {
           $lookup: {
-            from: 'answers', // kitos kolekcijos pavadinimas
-            localField: '_id', // user kolekcijos raktas per kurį susijungia
-            foreignField: 'questionId', // kitos kolekcijos raktas per kurį susijungia
-            as: 'answers', // naujo rakto pavadinimas
+            from: 'comments', // kitos kolekcijos pavadinimas
+            localField: '_id', // owners kolekcijos raktas per kurį susijungia
+            foreignField: 'postId', // kitos kolekcijos raktas per kurį susijungia
+            as: 'comments', // naujo rakto pavadinimas
           },
         },
         {
           $addFields: {
-            answerCount: { $size: '$answers' }, // suskaičiuoja komentarus
+            commentCount: { $size: '$comments' }, // Add a new field 'commentCount' to each post document
           },
         },
       ])
-      .sort({ dateCreated: sortDateType }) // rūšiuoja pagal
+      .sort({ dateCreated: sortDateType })
 
       .toArray();
     await con.close();
@@ -106,13 +100,13 @@ app.get('/questions', async (req, res) => {
   }
 });
 
-app.get('/questions/:id', async (req, res) => {
+app.get('/posts/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const con = await client.connect();
     const data = await con
       .db(dbName)
-      .collection('questions')
+      .collection('posts')
       .aggregate([
         {
           $match: {
@@ -121,10 +115,10 @@ app.get('/questions/:id', async (req, res) => {
         },
         {
           $lookup: {
-            from: 'answers', // kitos kolekcijos pavadinimas
+            from: 'comments', // kitos kolekcijos pavadinimas
             localField: '_id', // owners kolekcijos raktas per kurį susijungia
-            foreignField: 'questionId', // kitos kolekcijos raktas per kurį susijungia
-            as: 'answers', // naujo rakto pavadinimas
+            foreignField: 'postId', // kitos kolekcijos raktas per kurį susijungia
+            as: 'comments', // naujo rakto pavadinimas
           },
         },
       ])
@@ -137,20 +131,20 @@ app.get('/questions/:id', async (req, res) => {
   }
 });
 
-app.post('/questions', async (req, res) => {
+app.post('/posts', async (req, res) => {
   try {
-    const { dateCreated, text, edited, userId, title, name } = req.body;
+    const { dateCreated, text, edited, userId, title, nickname } = req.body;
     const con = await client.connect();
     const data = await con
       .db(dbName)
-      .collection('questions')
+      .collection('posts')
       .insertOne({
         dateCreated,
         title,
         text,
         edited,
         usersId: new ObjectId(userId),
-        name,
+        nickname,
       });
     await con.close();
     res.send(data);
@@ -159,14 +153,15 @@ app.post('/questions', async (req, res) => {
   }
 });
 
-// Pasiekia ir ištraukia atsakymus
+// Get and Post Answers/Comments
+
 app.get('/answers/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const con = await client.connect();
     const data = await con
       .db(dbName)
-      .collection('answers')
+      .collection('comments')
       .findOne({ _id: new ObjectId(id) });
 
     await con.close();
@@ -176,14 +171,14 @@ app.get('/answers/:id', async (req, res) => {
   }
 });
 
-app.get('/questions/:id/answers', async (req, res) => {
+app.get('/posts/:id/answers', async (req, res) => {
   try {
     const { id } = req.params;
     const con = await client.connect();
     const data = await con
       .db(dbName)
-      .collection('answers')
-      .find({ questionId: new ObjectId(id) })
+      .collection('comments')
+      .find({ postId: new ObjectId(id) })
       .toArray();
     await con.close();
     res.send(data);
@@ -192,27 +187,28 @@ app.get('/questions/:id/answers', async (req, res) => {
   }
 });
 
-app.post('/questions/:id/answers', async (req, res) => {
+app.post('/posts/:id/answers', async (req, res) => {
   try {
     const { id } = req.params;
     const {
       dateCreated,
-      answer,
+      text,
       edited,
       userId,
-      name,
+      nickname,
       likeCounter,
       userLikes,
     } = req.body;
+
     const con = await client.connect();
     const data = await con
       .db(dbName)
-      .collection('answers')
+      .collection('comments')
       .insertOne({
         dateCreated,
-        answer,
+        text,
         edited,
-        name,
+        nickname,
         userId: new ObjectId(userId),
         postId: new ObjectId(id),
         likeCounter,
@@ -225,16 +221,50 @@ app.post('/questions/:id/answers', async (req, res) => {
   }
 });
 
-// 5.redaguojam užduotą klausimą  ir matome kad klausimas readaguotas (prisijungusiems)
+// Delete Question
 
-app.patch('/questions/:id', async (req, res) => {
+app.delete('/posts/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const con = await client.connect();
+    const data = await con
+      .db(dbName)
+      .collection('posts')
+      .deleteOne({ _id: new ObjectId(id) });
+    await con.close();
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+// Delete comment/answer
+
+app.delete('/answers/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const con = await client.connect();
+    const data = await con
+      .db(dbName)
+      .collection('comments')
+      .deleteOne({ _id: new ObjectId(id) });
+    await con.close();
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+// Update posts/questions
+
+app.patch('/posts/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { title, text, edited, dateCreated } = req.body;
     const con = await client.connect();
     const data = await con
       .db(dbName)
-      .collection('questions')
+      .collection('posts')
       .updateOne(
         { _id: new ObjectId(id) },
         { $set: { title, text, edited, dateCreated } },
@@ -246,117 +276,8 @@ app.patch('/questions/:id', async (req, res) => {
   }
 });
 
-// pasiekiam ir rodom atsakymus
-app.get('/answer/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const con = await client.connect();
-    const data = await con
-      .db(dbName)
-      .collection('answers')
-      .findOne({ _id: new ObjectId(id) });
+// Update comment/answer
 
-    await con.close();
-    res.send(data);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-app.get('/questions/:id/answer', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const con = await client.connect();
-    const data = await con
-      .db(dbName)
-      .collection('answers')
-      .find({ postId: new ObjectId(id) })
-      .toArray();
-    await con.close();
-    res.send(data);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-
-app.post('/questions/:id/answers', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { dateCreated, text, edited, userId, name, likeCounter, userLikes } =
-      req.body;
-    const con = await client.connect();
-    const data = await con
-      .db(dbName)
-      .collection('answers')
-      .insertOne({
-        dateCreated,
-        text,
-        edited,
-        name,
-        userId: new ObjectId(userId),
-        postId: new ObjectId(id),
-        likeCounter,
-        userLikes,
-      });
-    await con.close();
-    res.send(data);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-
-// 5.Ištrina klausimą
-app.delete('/questions/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const con = await client.connect();
-    const data = await con
-      .db(dbName)
-      .collection('questions')
-      .deleteOne({ _id: new ObjectId(id) });
-    await con.close();
-    res.send(data);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-
-// 10. Ištrimam  konkretų atsakymą (TIK PRISIJUNGUS)
-app.delete('/answers/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const con = await client.connect();
-    const data = await con
-      .db(dbName)
-      .collection('answers')
-      .deleteOne({ _id: new ObjectId(id) });
-    await con.close();
-    res.send(data);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-
-// Redaguojam klausimą
-app.patch('/questions/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, post, edited, dateCreated } = req.body;
-    const con = await client.connect();
-    const data = await con
-      .db(dbName)
-      .collection('questions')
-      .updateOne(
-        { _id: new ObjectId(id) },
-        { $set: { name, post, edited, dateCreated } },
-      );
-    await con.close();
-    res.send(data);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
-
-// Redaguojam atsakymą
 app.patch('/answers/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -364,7 +285,7 @@ app.patch('/answers/:id', async (req, res) => {
     const con = await client.connect();
     const data = await con
       .db(dbName)
-      .collection('answers')
+      .collection('comments')
       .updateOne(
         { _id: new ObjectId(id) },
         { $set: { text, edited, dateCreated } },
@@ -375,5 +296,23 @@ app.patch('/answers/:id', async (req, res) => {
     res.status(500).send(error);
   }
 });
+app.patch('/answers/:id/likes', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { likeCounter, userLikes } = req.body;
+    const con = await client.connect();
+    const data = await con
+      .db(dbName)
+      .collection('comments')
+      .updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { likeCounter, userLikes } },
+      );
+    await con.close();
+    res.send(data);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 
-app.listen(port, () => {});
+app.listen(port, () => console.log(`Server started on port ${port}...`));

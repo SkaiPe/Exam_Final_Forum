@@ -1,33 +1,37 @@
-import PropTypes from "prop-types";
 import { createContext, useState } from "react";
+import axios from "axios";
+import { MAIN_ROUTE } from "../routes/const";
 import { useNavigate } from "react-router-dom";
-import { LOGIN_ROUTE } from "../routes/const";
-import { checkUserCredentials } from "../utils/user";
-import { getUsers, createUser, updateUser } from "../api/users";
 
 const UserContext = createContext({
   user: null,
   isLoggedIn: false,
   handleLogin: () => null,
   handleLogout: () => null,
-  handleRegister: () => null,
-  handleUpdateUser: () => null,
 });
 
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
-  const isLoggedIn = !!user;
+
+  let [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [message, setMessage] = useState("");
+  isLoggedIn = !!user;
+
   const navigate = useNavigate();
 
-  const handleLogin = (user, setError) => {
-    getUsers()
+  const handleLogin = (userLogin) => {
+    axios
+      .post("http://localhost:3000/login", userLogin)
       .then((response) => {
-        const existingUser = checkUserCredentials(response, user);
-        if (existingUser) {
-          setUser(existingUser);
-          localStorage.setItem("user", JSON.stringify(existingUser));
+        setIsLoggedIn(response.data.loggedIn);
+
+        if (response.data.loggedIn) {
+          localStorage.setItem("user", JSON.stringify(response.data.userData));
+          setMessage("Sveiki prisijungę");
+          setUser(response.data.userData);
+          navigate(MAIN_ROUTE);
         } else {
-          setError("User email or password is incorrect.");
+          setMessage("Klaida. Bandykite dar karta");
         }
       })
       .catch((error) => {
@@ -38,28 +42,7 @@ const UserProvider = ({ children }) => {
   const handleLogout = () => {
     setUser(null);
     localStorage.setItem("user", null);
-    navigate(LOGIN_ROUTE);
-  };
-
-  const handleRegister = (newUser) => {
-    createUser(newUser)
-      .then(() => {
-        navigate(LOGIN_ROUTE);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const handleUpdateUser = (updatingUser) => {
-    updateUser(user.id, updatingUser)
-      .then((response) => {
-        setUser(response);
-        localStorage.setItem("user", JSON.stringify(response));
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    navigate(MAIN_ROUTE);
   };
 
   return (
@@ -67,18 +50,14 @@ const UserProvider = ({ children }) => {
       value={{
         user,
         isLoggedIn,
+        message,
         handleLogin,
         handleLogout,
-        handleRegister,
-        handleUpdateUser,
       }}
     >
       {children}
     </UserContext.Provider>
   );
-};
-UserProvider.propTypes = {
-  children: PropTypes.node.isRequired,
 };
 
 export { UserContext, UserProvider };
