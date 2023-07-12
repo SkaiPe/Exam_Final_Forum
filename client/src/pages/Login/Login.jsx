@@ -1,31 +1,45 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Input from "../../components/Input";
 import "./Login.css";
+import { UserContext } from "../../context/UserContext";
 
 const Login = () => {
-  const [userName, setUserName] = useState("");
-  const [userPassword, setUserPassword] = useState("");
+  const { handleLogin, message, isLoggedIn, user } = useContext(UserContext);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const userLogin = { email, password };
 
   const inputUserName = (e) => {
-    setUserName(e.target.value);
+    setEmail(e.target.value);
   };
 
   const inputUserPassword = (e) => {
-    setUserPassword(e.target.value);
+    setPassword(e.target.value);
+  };
+
+  const formSubmit = (e) => {
+    e.preventDefault();
+    handleLogin(userLogin);
+    console.log(user);
+    console.log(isLoggedIn);
   };
 
   return (
     <div>
-      <form>
+      <form onSubmit={formSubmit}>
+        <h1>Prisijungimas</h1>
+        <h3>{message}</h3>
         <Input
-          value={userName}
+          value={email}
           onChange={inputUserName}
-          placeholder="Įveskite vartotojo vardą"
+          placeholder="Įveskite el. paštą"
         />
         <Input
-          value={userPassword}
+          value={password}
           onChange={inputUserPassword}
           placeholder="Įveskite vartotojo slaptažodį"
+          type="password"
         />
         <button type="submit">Prisijungti</button>
       </form>
