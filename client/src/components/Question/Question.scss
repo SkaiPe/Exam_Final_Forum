@@ -1,77 +1,34 @@
-.question-card {
-    padding: 1rem;
-    display: flex;
+@import '../../styles/colors.scss';
+
+.cardContainer  {
+    background-color: $primaryLight;
+    padding: 1.5rem;
+    border-radius: 7px;
+    max-width: 600px;
+    width:100%;
     margin-bottom: 1rem;
+    overflow-wrap:break-word;
+}
+
+.questionCardHeader {
+    display: flex;
     justify-content: space-between;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  }
-  
-  .question {
-  
-    text-align: start;
-  
-  
-    &-text {
-      font-size: 16px;
-      margin-bottom: 0.5rem;
-    }
-  
-    .updating {
-      font-size: 14px;
-      font-style: italic;
-      color: var(--clr-green-600);
-    }
-  
-    .creating-date {
-      font-size: 14px;
-      font-style: italic;
-      color: var(--clr-primary-300)
-    }
-  
-  
-  }
-  
-  .btns-box {
+    font-size: 0.8rem;
+}
+
+.questionTitle{
+    margin-bottom: 0rem;
+}
+
+.questionCardFooter {
+    padding-top: 1rem;
     display: flex;
-    gap: 1rem;
-  }
-  
-  .view-box {
-    padding-inline: 1rem;
-    height: 30px;
-    border-radius: 3px;
-    color: var(--clr-primary-300);
-    background-color: #dce8ff;
-    border: 1px solid #375c9f;
-    display: flex;
+    gap:10px;
     align-items: center;
-    justify-content: center;
-  }
-  
-  .edit-box {
-    width: 30px;
-    height: 30px;
-    border-radius: 3px;
-    color: #8d8b8b;
-    background-color: var(--clr-green-300);
-    border: 1px solid #4fe0b6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .trash-box {
-    width: 30px;
-    height: 30px;
-    border-radius: 3px;
-    color: #8d8b8b;
-    background-color: #faf0f3;
-    border: 1px solid #f287ab;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .icon {
-    font-size: 20px;
-  }
+    justify-content: space-between;
+ 
+}
+
+.questionContent{
+    cursor: pointer;
+}

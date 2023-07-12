@@ -1,6 +1,6 @@
 import Input from "../Input/Input";
 import PropTypes from "prop-types";
-import "./FormItem.css";
+import "./FormItem.scss";
 
 const FormItem = ({ label, containerClassname, ...rest }) => {
   return (
