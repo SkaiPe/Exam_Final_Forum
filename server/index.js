@@ -373,23 +373,5 @@ app.patch('/answers/:id', async (req, res) => {
     res.status(500).send(error);
   }
 });
-app.patch('/answers/:id/likes', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { likeCounter, userLikes } = req.body;
-    const con = await client.connect();
-    const data = await con
-      .db(dbName)
-      .collection('answers')
-      .updateOne(
-        { _id: new ObjectId(id) },
-        { $set: { likeCounter, userLikes } },
-      );
-    await con.close();
-    res.send(data);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
 
 app.listen(port, () => {});
