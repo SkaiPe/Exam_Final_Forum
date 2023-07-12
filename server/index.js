@@ -56,6 +56,8 @@ app.get('/users', async (req, res) => {
   }
 });
 
+// prideda nauja vartotoja i duomenu baze
+
 app.post('/users', async (req, res) => {
   try {
     const user = req.body;
