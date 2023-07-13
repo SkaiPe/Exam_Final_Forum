@@ -24,7 +24,7 @@ app.post('/login', async (req, res) => {
 
     let loggedIn = false;
     let userData = null;
-
+    console.log(req.body);
     if (data) {
       loggedIn = true;
       userData = data;
@@ -66,10 +66,10 @@ app.post('/users', async (req, res) => {
 
 // Get and Post Questions/Posts
 
-app.get('/posts', async (req, res) => {
+app.get('/question', async (req, res) => {
   try {
-    const { sortDate } = req.query;
-    const sortDateType = sortDate === 'asc' ? 1 : -1;
+    const { filterDate } = req.query;
+    const sortDateType = filterDate === 'asc' ? 1 : -1;
 
     const con = await client.connect();
     const data = await con
@@ -90,7 +90,7 @@ app.get('/posts', async (req, res) => {
           },
         },
       ])
-      .sort({ dateCreated: sortDateType })
+      .sort({ date: sortDateType })
 
       .toArray();
     await con.close();
@@ -100,7 +100,7 @@ app.get('/posts', async (req, res) => {
   }
 });
 
-app.get('/posts/:id', async (req, res) => {
+app.get('/question/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const con = await client.connect();
@@ -131,21 +131,16 @@ app.get('/posts/:id', async (req, res) => {
   }
 });
 
-app.post('/posts', async (req, res) => {
+app.post('/question', async (req, res) => {
   try {
-    const { dateCreated, text, edited, userId, title, nickname } = req.body;
+    const { date, text, edited, name } = req.body;
     const con = await client.connect();
-    const data = await con
-      .db(dbName)
-      .collection('posts')
-      .insertOne({
-        dateCreated,
-        title,
-        text,
-        edited,
-        usersId: new ObjectId(userId),
-        nickname,
-      });
+    const data = await con.db(dbName).collection('posts').insertOne({
+      date,
+      text,
+      edited,
+      name,
+    });
     await con.close();
     res.send(data);
   } catch (error) {
@@ -171,7 +166,7 @@ app.get('/answers/:id', async (req, res) => {
   }
 });
 
-app.get('/posts/:id/answers', async (req, res) => {
+app.get('/question/:id/answers', async (req, res) => {
   try {
     const { id } = req.params;
     const con = await client.connect();
@@ -187,32 +182,21 @@ app.get('/posts/:id/answers', async (req, res) => {
   }
 });
 
-app.post('/posts/:id/answers', async (req, res) => {
+app.post('/question/:id/answers', async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      dateCreated,
-      text,
-      edited,
-      userId,
-      nickname,
-      likeCounter,
-      userLikes,
-    } = req.body;
+    const { date, text, edited, name } = req.body;
 
     const con = await client.connect();
     const data = await con
       .db(dbName)
       .collection('comments')
       .insertOne({
-        dateCreated,
+        date,
         text,
         edited,
-        nickname,
-        userId: new ObjectId(userId),
+        name,
         postId: new ObjectId(id),
-        likeCounter,
-        userLikes,
       });
     await con.close();
     res.send(data);
@@ -223,7 +207,7 @@ app.post('/posts/:id/answers', async (req, res) => {
 
 // Delete Question
 
-app.delete('/posts/:id', async (req, res) => {
+app.delete('/question/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const con = await client.connect();
@@ -257,18 +241,15 @@ app.delete('/answers/:id', async (req, res) => {
 
 // Update posts/questions
 
-app.patch('/posts/:id', async (req, res) => {
+app.patch('/question/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, text, edited, dateCreated } = req.body;
+    const { text, edited } = req.body;
     const con = await client.connect();
     const data = await con
       .db(dbName)
       .collection('posts')
-      .updateOne(
-        { _id: new ObjectId(id) },
-        { $set: { title, text, edited, dateCreated } },
-      );
+      .updateOne({ _id: new ObjectId(id) }, { $set: { text, edited } });
     await con.close();
     res.send(data);
   } catch (error) {
