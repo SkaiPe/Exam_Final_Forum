@@ -33,7 +33,7 @@ const Register = () => {
     e.preventDefault();
     axios
       .post("http://localhost:3000/users", user)
-      //   .then(navigate(LOGIN_ROUTE))
+      .then(navigate(LOGIN_ROUTE))
       .catch((error) => {
         console.error(error);
       });
@@ -42,19 +42,31 @@ const Register = () => {
     <div>
       <form onSubmit={formSubmit}>
         <h1>Registracija</h1>
-        <Input value={email} onChange={userEmail} placeholder="El. paštas" />
-        <Input value={name} onChange={userName} placeholder="Slapyvardis" />
+        <Input
+          value={email}
+          onChange={userEmail}
+          placeholder="El. paštas"
+          required
+        />
+        <Input
+          value={name}
+          onChange={userName}
+          placeholder="Slapyvardis"
+          required
+        />
         <Input
           value={password}
           onChange={userPassword}
           placeholder="Slaptažodis"
           type="password"
+          required
         />
         <Input
           value={passwordRepeat}
           onChange={repeatPassword}
           placeholder="Pakartokite slaptažodį"
           type="password"
+          required
         />
 
         <button type="submit">Registruotis</button>
