@@ -1,0 +1,9 @@
+.like:disabled {
+ background-color: green;
+ color:black;
+}
+
+.dislike:disabled {
+    background-color: red;
+    color:black;
+   }
