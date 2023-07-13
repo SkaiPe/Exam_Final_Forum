@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import Input from "../../components/Input";
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const Question = () => {
   const [question, setQuestion] = useState("");
@@ -10,6 +11,8 @@ const Question = () => {
   const questionOnChange = (e) => {
     setQuestion(e.target.value);
   };
+
+  const navigate = useNavigate();
 
   const userQuestion = {
     text: question,
@@ -23,7 +26,7 @@ const Question = () => {
     axios
       .post("http://localhost:3000/question", userQuestion)
       .then(() => {
-        window.location.reload();
+        navigate("/");
       })
       .catch((error) => {
         console.error(error);
