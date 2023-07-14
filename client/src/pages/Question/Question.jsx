@@ -3,6 +3,7 @@ import Input from "../../components/Input";
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import "./Question.css";
 
 const Question = () => {
   const [question, setQuestion] = useState("");
@@ -34,15 +35,17 @@ const Question = () => {
   };
 
   return (
-    <form onSubmit={formSubmit}>
-      <h1>Užduokite klausimą</h1>
-      <Input
-        value={question}
-        onChange={questionOnChange}
-        placeholder="Užduokite klausimą..."
-      />
-      <button type="submit">Klausti</button>
-    </form>
+    <div class="question-container">
+      <form onSubmit={formSubmit}>
+        <h1>Užduokite klausimą</h1>
+        <Input
+          value={question}
+          onChange={questionOnChange}
+          placeholder="Užduokite klausimą..."
+        />
+        <button type="submit">Klausti</button>
+      </form>
+    </div>
   );
 };
 

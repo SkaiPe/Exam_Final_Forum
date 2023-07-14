@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { LOGIN_ROUTE } from "../../routes/const";
 import { useState } from "react";
-
+import "./Register.css";
 const Register = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -39,7 +39,7 @@ const Register = () => {
       });
   };
   return (
-    <div>
+    <div class="reg-cont">
       <form onSubmit={formSubmit}>
         <h1>Registracija</h1>
         <Input

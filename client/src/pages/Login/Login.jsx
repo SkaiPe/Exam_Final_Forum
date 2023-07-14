@@ -26,7 +26,7 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div class="login-container">
       <form onSubmit={formSubmit}>
         <h1>Prisijungimas</h1>
         <h3>{message}</h3>

@@ -1,13 +1,8 @@
-.login-container {
+.reg-cont{
     width: 500px;
-    height: 200px;
+    height: 300px;
     margin: 0 auto;
     padding: 2rem;
     background-color: #ffffff;
     border-radius: 10px;
-}
-form{
-    display: flex;
-    flex-direction: column;
-    width:500px
 }

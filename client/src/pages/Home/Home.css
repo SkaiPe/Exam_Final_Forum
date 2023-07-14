@@ -1,3 +1,13 @@
+.question-box{
+    width: 800px;
+    height: 90px;
+    margin: 10px auto;
+    padding: 10px;
+    background-color: #e7f4f1;
+    border: 2px solid #7f7c802f;
+    border-radius: 15px;
+    
+}
 .question {
     margin-top: 20px;
 }

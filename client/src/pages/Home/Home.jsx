@@ -56,11 +56,13 @@ const Home = () => {
       {allQuestions.map((item, index) => (
         <div className="question" key={index}>
           <div onClick={() => navigate(`/question/${item._id}`)}>
-            {" "}
-            <div>Vartotojas: {item.name}</div>
-            <div>{item.date}</div>
-            <div>{item.text}</div>
-            <div>{item.edited ? "Redaguota" : ""}</div>
+            <div className="question-box">
+              {" "}
+              <div>Vartotojas: {item.name}</div>
+              <div>{item.date}</div>
+              <div>{item.text}</div>
+              <div>{item.edited ? "Redaguota" : ""}</div>
+            </div>
           </div>
 
           {user && (

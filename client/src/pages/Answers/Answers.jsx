@@ -60,13 +60,12 @@ const Answers = () => {
       <h4>{question.text}</h4>
       {user ? (
         <form onSubmit={commentSubmit}>
-          <button type="submit">Atsakyti</button>
-
           <Input
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Įveskite savo atsakymą čia..."
           />
+          <button type="submit">Atsakyti</button>
         </form>
       ) : (
         "Norėdami komentuoti prisijunkite"
