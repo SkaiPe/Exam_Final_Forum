@@ -1,3 +1,19 @@
 .container {
-    margin:1rem;
+    margin:  10px;
+}
+.answ-box{
+    background-color: rgb(252, 252, 249);
+    width: 500px;
+    height: 200px;
+    margin: 10px auto;
+    padding: 10px;
+   text-align: center;
+    border-radius: 10px;
+}
+.quest{
+    background-color: aqua;
+    height: 80px;
+    margin: 10px ;
+    padding: 5px;
+    
 }

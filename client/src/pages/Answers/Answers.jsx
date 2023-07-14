@@ -2,7 +2,6 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getQuestion } from "../../api/questions";
-import CommentInput from "../../components/CommentInput";
 import Input from "../../components/Input";
 import { UserContext } from "../../context/UserContext";
 import "./Answers.css";
@@ -55,22 +54,26 @@ const Answers = () => {
   return (
     <div>
       {isLoading ? <div>Loading</div> : ""}
-      <div>Vartotojas: {question.name}</div>
-      <div>{question.date}</div>
-      <h4>{question.text}</h4>
+      <div className="quest">
+        <div>Vartotojas: {question.name}</div>
+        <div>{question.date}</div>
+        <h4>{question.text}</h4>
+      </div>
       {user ? (
         <form onSubmit={commentSubmit}>
-          <Input
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Įveskite savo atsakymą čia..."
-          />
-          <button type="submit">Atsakyti</button>
+          <div className="quest">
+            <Input
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Įveskite savo atsakymą čia..."
+            />
+            <button type="submit">Atsakyti</button>
+          </div>
         </form>
       ) : (
         "Norėdami komentuoti prisijunkite"
       )}
-      <div>
+      <div class="answ-box">
         <h3>Atsakymai:</h3>
         <div>
           {comments.map((item, index) => (
